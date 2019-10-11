@@ -9,6 +9,7 @@
 #define JUMP_ANGLE_STEP 4
 #define JUMP_HEIGHT 96
 #define FALL_STEP 4
+#define RUN_SPEED 1
 
 
 enum PlayerAnims
@@ -48,7 +49,7 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(9.f / 10.f, 1.f / 10.f));
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(7.f / 10.f, 1.f / 10.f));
 
-	sprite->changeAnimation(0);
+	sprite->changeAnimation(STAND_RIGHT);
 	tileMapDispl = tileMapPos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 
@@ -61,10 +62,10 @@ void Player::update(int deltaTime)
 	{
 		if (sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);
-		posPlayer.x -= 2;
+		posPlayer.x -= RUN_SPEED;
 		if (map->collisionMoveLeft(posPlayer, glm::ivec2(48, 48)))
 		{
-			posPlayer.x += 2;
+			posPlayer.x += RUN_SPEED;
 			sprite->changeAnimation(STAND_LEFT);
 		}
 	}
@@ -72,10 +73,10 @@ void Player::update(int deltaTime)
 	{
 		if (sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);
-		posPlayer.x += 2;
+		posPlayer.x += RUN_SPEED;
 		if (map->collisionMoveRight(posPlayer, glm::ivec2(48, 48)))
 		{
-			posPlayer.x -= 2;
+			posPlayer.x -= RUN_SPEED;
 			sprite->changeAnimation(STAND_RIGHT);
 		}
 	}
