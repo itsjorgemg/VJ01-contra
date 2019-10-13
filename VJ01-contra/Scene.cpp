@@ -49,9 +49,8 @@ void Scene::update(int deltaTime)
 	player->update(deltaTime);
 
 	float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
-	if (posPlayer < 0) {
-		posPlayer = 0;
-	}
+	float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
+	posPlayer = glm::clamp(posPlayer, 0.0f, rightLimit);
 	projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
 }
 
