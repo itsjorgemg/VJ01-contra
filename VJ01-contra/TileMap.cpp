@@ -100,6 +100,32 @@ bool TileMap::loadLevel(const string &levelFile)
 		fin.get(tile);
 #endif
 	}
+
+	getline(fin, line);
+
+	offsets = new int[tilesheetSize.x * tilesheetSize.y];
+	for (int i = 0; i < tilesheetSize.x * tilesheetSize.y; i++) {
+		offsets[i] = -1;
+	}
+
+	fin.get(tile);
+	while (tile != '.') {
+		int item = 0;
+		while (tile != ' ') {
+			item = item * 10 + tile - int('0');
+			fin.get(tile);
+		}
+		int offset = 0;
+		fin.get(tile);
+		while (tile != ',') {
+			offset = offset * 10 + tile - int('0');
+			fin.get(tile);
+		}
+		offsets[item] = offset;
+
+		fin.get(tile);
+	}
+
 	fin.close();
 	
 	return true;
@@ -208,11 +234,11 @@ bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, i
 	}
 	for(int x=x0; x<=x1; x++)
 	{
-		if(map[y*mapSize.x+x] == 4 || map[y*mapSize.x+x] == 34)
-		{
-			if(*posY - tileSize * y + size.y <= 4) // 4 => FALL_STEP de Player
+		int tile = map[y * mapSize.x + x] - 1;
+		if (offsets[tile] != -1) {
+			if (*posY - tileSize * y + size.y - offsets[tile] <= 4) // 4 => FALL_STEP de Player
 			{
-				*posY = tileSize * y - size.y;
+				*posY = tileSize * y - size.y + offsets[tile];
 				return true;
 			}
 		}
