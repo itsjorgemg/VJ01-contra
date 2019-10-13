@@ -22,6 +22,7 @@ public:
 	void setPosition(const glm::vec2 &pos);
 	glm::ivec2 getPosition();
 	glm::ivec2 getSize();
+	glm::ivec2 getHitbox(bool top);
 	
 private:
 	bool bJumping;

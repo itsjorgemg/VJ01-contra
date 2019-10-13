@@ -63,7 +63,7 @@ void Player::update(int deltaTime)
 		if (sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);
 		posPlayer.x -= RUN_SPEED;
-		if (map->collisionMoveLeft(posPlayer, glm::ivec2(48, 48)))
+		if (map->collisionMoveLeft(posPlayer + getHitbox(1), getHitbox(0)))
 		{
 			posPlayer.x += RUN_SPEED;
 			sprite->changeAnimation(STAND_LEFT);
@@ -74,7 +74,7 @@ void Player::update(int deltaTime)
 		if (sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);
 		posPlayer.x += RUN_SPEED;
-		if (map->collisionMoveRight(posPlayer, glm::ivec2(48, 48)))
+		if (map->collisionMoveRight(posPlayer + getHitbox(1), getHitbox(0)))
 		{
 			posPlayer.x -= RUN_SPEED;
 			sprite->changeAnimation(STAND_RIGHT);
@@ -100,13 +100,13 @@ void Player::update(int deltaTime)
 		{
 			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
 			if (jumpAngle > 90)
-				bJumping = !map->collisionMoveDown(posPlayer, glm::ivec2(48, 48), &posPlayer.y);
+				bJumping = !map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y);
 		}
 	}
 	else
 	{
 		posPlayer.y += FALL_STEP;
-		if (map->collisionMoveDown(posPlayer, glm::ivec2(48, 48), &posPlayer.y))
+		if (map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y))
 		{
 			if (Game::instance().getSpecialKey(GLUT_KEY_UP))
 			{
@@ -146,4 +146,85 @@ glm::ivec2 Player::getPosition()
 glm::ivec2 Player::getSize()
 {
 	return glm::ivec2(48, 48);
+}
+
+glm::ivec2 Player::getHitbox(bool top)
+{
+	switch (sprite->animation()) {
+	case STAND_LEFT:
+		if (top) return glm::ivec2(20, 13);
+		else return glm::ivec2(34, 47);
+		break;
+	case STAND_RIGHT:
+		if (top) return glm::ivec2(18, 13);
+		else return glm::ivec2(31, 47);
+		break;
+	case MOVE_LEFT:
+		switch (sprite->Keyframe()) {
+		case 0:
+			if (top) return glm::ivec2(18, 13);
+			else return glm::ivec2(33, 47);
+			break;
+		case 1:
+			if (top) return glm::ivec2(18, 13);
+			else return glm::ivec2(35, 47);
+			break;
+		case 2:
+			if (top) return glm::ivec2(16, 16);
+			else return glm::ivec2(36, 47);
+			break;
+		case 3:
+			if (top) return glm::ivec2(16, 13);
+			else return glm::ivec2(33, 47);
+			break;
+		case 4:
+			if (top) return glm::ivec2(16, 13);
+			else return glm::ivec2(33, 47);
+			break;
+		case 5:
+			if (top) return glm::ivec2(16, 16);
+			else return glm::ivec2(36, 47);
+			break;
+		default:
+			if (top) return posPlayer;
+			else return glm::ivec2(48, 48);
+			break;
+		}
+		break;
+	case MOVE_RIGHT:
+		switch (sprite->Keyframe()) {
+		case 0:
+			if (top) return glm::ivec2(19, 13);
+			else return glm::ivec2(33, 47);
+			break;
+		case 1:
+			if (top) return glm::ivec2(17, 13);
+			else return glm::ivec2(32, 47);
+			break;
+		case 2:
+			if (top) return glm::ivec2(16, 16);
+			else return glm::ivec2(36, 47);
+			break;
+		case 3:
+			if (top) return glm::ivec2(19, 14);
+			else return glm::ivec2(34, 47);
+			break;
+		case 4:
+			if (top) return glm::ivec2(17, 14);
+			else return glm::ivec2(34, 47);
+			break;
+		case 5:
+			if (top) return glm::ivec2(16, 16);
+			else return glm::ivec2(36, 47);
+			break;
+		default:
+			if (top) return posPlayer;
+			else return glm::ivec2(48, 48);
+			break;
+		}
+		break;
+	default:
+		if (top) return posPlayer;
+		else return glm::ivec2(48, 48);
+	}
 }
