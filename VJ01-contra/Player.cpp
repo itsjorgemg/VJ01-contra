@@ -22,7 +22,7 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 {
 	bJumping = false;
 	spritesheet.loadFromFile("images/main_character.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(48, 48), glm::vec2(1.f / 10.f, 1.f / 10.f), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(getSize(), glm::vec2(1.f / 10.f, 1.f / 10.f), &spritesheet, &shaderProgram);
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
 	sprite->setNumberAnimations(4);
@@ -136,6 +136,12 @@ void Player::setPosition(const glm::vec2& pos)
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
+glm::ivec2 Player::getPosition()
+{
+	return posPlayer;
+}
 
-
-
+glm::ivec2 Player::getSize()
+{
+	return glm::ivec2(48, 48);
+}

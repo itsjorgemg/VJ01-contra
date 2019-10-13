@@ -11,6 +11,9 @@
 #define INIT_PLAYER_X_TILES 1
 #define INIT_PLAYER_Y_TILES 0
 
+#define CAMERA_WIDTH 32 * 8
+#define CAMERA_HEIGHT 32 * 7
+
 
 Scene::Scene()
 {
@@ -36,8 +39,7 @@ void Scene::init()
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	player->setTileMap(map);
 	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-	projection = glm::ortho(0.f, 32*8.0f, 32*7.0f, 0.f);
-	//projection = glm::scale(projection, glm::vec3(2.0f));
+	projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
 	currentTime = 0.0f;
 }
 
@@ -45,12 +47,12 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	player->update(deltaTime);
-	if (Game::instance().getKey('.')) {
-		projection = glm::translate(projection, glm::vec3(-1.0f, 0.0f, 0.0f));
-	} else if (Game::instance().getKey(',')) {
-		projection = glm::translate(projection, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
+	if (posPlayer < 0) {
+		posPlayer = 0;
 	}
-	//projection = glm::translate(projection, glm::vec3(-deltaTime/32.0f, 0.0f, 0.0f));
+	projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
 }
 
 void Scene::render()
