@@ -113,6 +113,8 @@ void Player::update(int deltaTime)
 				bJumping = true;
 				jumpAngle = 0;
 				startY = posPlayer.y;
+			} else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+				posPlayer.y += FALL_STEP;
 			}
 		}
 	}
