@@ -96,12 +96,12 @@ void Sprite::changeAnimation(int animId)
 	}
 }
 
-int Sprite::animation() const
+int Sprite::getCurrentAnimation() const
 {
 	return currentAnimation;
 }
 
-int Sprite::Keyframe() const
+int Sprite::getCurrentKeyframe() const
 {
 	return currentKeyframe;
 }

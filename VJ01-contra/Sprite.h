@@ -30,8 +30,8 @@ public:
 	void setAnimationSpeed(int animId, int keyframesPerSec);
 	void addKeyframe(int animId, const glm::vec2 &frame);
 	void changeAnimation(int animId);
-	int animation() const;
-	int Keyframe() const;
+	int getCurrentAnimation() const;
+	int getCurrentKeyframe() const;
 	
 	void setPosition(const glm::vec2 &pos);
 

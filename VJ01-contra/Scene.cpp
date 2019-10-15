@@ -14,9 +14,12 @@
 #define CAMERA_WIDTH 32 * 8
 #define CAMERA_HEIGHT 32 * 7
 
+#define STARTSCREEN_WIDTH 240
+#define STARTSCREEN_HEIGHT 240
 
 Scene::Scene()
 {
+	level = START;
 	map = NULL;
 	player = NULL;
 }
@@ -33,25 +36,48 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	player = new Player();
-	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	player->setTileMap(map);
-	//projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-	projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
+
+	switch (level) {
+	case START:
+		texture.loadFromFile("images/startscreen.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		texture.setMinFilter(GL_NEAREST);
+		texture.setMagFilter(GL_NEAREST);
+		sprite = Sprite::createSprite(glm::ivec2(STARTSCREEN_WIDTH, STARTSCREEN_HEIGHT), glm::vec2(1.0f, 1.0f), &texture, &texProgram);
+		projection = glm::ortho(0.0f, float(STARTSCREEN_WIDTH), float(STARTSCREEN_HEIGHT), 0.0f);
+		break;
+	case LEVEL1:
+		map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+		player = new Player();
+		player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		player->setTileMap(map);
+		projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
+		break;
+	}
+	
 	currentTime = 0.0f;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	player->update(deltaTime);
 
-	float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
-	float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
-	posPlayer = glm::clamp(posPlayer, 0.0f, rightLimit);
-	projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
+	switch (level) {
+	case START:
+		if (Game::instance().getKey('\r')) {
+			level = LEVEL1;
+			init();
+		}
+		break;
+	case LEVEL1:
+		player->update(deltaTime);
+
+		float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
+		float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
+		posPlayer = glm::clamp(posPlayer, 0.0f, rightLimit);
+		projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
+	break;
+	}
 }
 
 void Scene::render()
@@ -64,8 +90,15 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
-	map->render();
-	player->render();
+	switch (level) {
+	case START:
+		sprite->render();
+		break;
+	case LEVEL1:
+		map->render();
+		player->render();
+	break;
+	}
 }
 
 void Scene::initShaders()

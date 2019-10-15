@@ -11,6 +11,7 @@
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
+enum Level { START, LEVEL1 };
 
 class Scene
 {
@@ -27,6 +28,9 @@ private:
 	void initShaders();
 
 private:
+	Level level;
+	Texture texture;
+	Sprite *sprite;
 	TileMap *map;
 	Player *player;
 	ShaderProgram texProgram;

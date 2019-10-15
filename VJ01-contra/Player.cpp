@@ -60,7 +60,7 @@ void Player::update(int deltaTime)
 	sprite->update(deltaTime);
 	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 	{
-		if (sprite->animation() != MOVE_LEFT)
+		if (sprite->getCurrentAnimation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);
 		posPlayer.x -= RUN_SPEED;
 		if (map->collisionMoveLeft(posPlayer + getHitbox(1), getHitbox(0)))
@@ -71,7 +71,7 @@ void Player::update(int deltaTime)
 	}
 	else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 	{
-		if (sprite->animation() != MOVE_RIGHT)
+		if (sprite->getCurrentAnimation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);
 		posPlayer.x += RUN_SPEED;
 		if (map->collisionMoveRight(posPlayer + getHitbox(1), getHitbox(0)))
@@ -82,9 +82,9 @@ void Player::update(int deltaTime)
 	}
 	else
 	{
-		if (sprite->animation() == MOVE_LEFT)
+		if (sprite->getCurrentAnimation() == MOVE_LEFT)
 			sprite->changeAnimation(STAND_LEFT);
-		else if (sprite->animation() == MOVE_RIGHT)
+		else if (sprite->getCurrentAnimation() == MOVE_RIGHT)
 			sprite->changeAnimation(STAND_RIGHT);
 	}
 
@@ -138,19 +138,19 @@ void Player::setPosition(const glm::vec2& pos)
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
-glm::ivec2 Player::getPosition()
+glm::ivec2 Player::getPosition() const
 {
 	return posPlayer;
 }
 
-glm::ivec2 Player::getSize()
+glm::ivec2 Player::getSize() const
 {
 	return glm::ivec2(48, 48);
 }
 
-glm::ivec2 Player::getHitbox(bool top)
+glm::ivec2 Player::getHitbox(bool top) const
 {
-	switch (sprite->animation()) {
+	switch (sprite->getCurrentAnimation()) {
 	case STAND_LEFT:
 		if (top) return glm::ivec2(20, 13);
 		else return glm::ivec2(34, 47);
@@ -160,7 +160,7 @@ glm::ivec2 Player::getHitbox(bool top)
 		else return glm::ivec2(31, 47);
 		break;
 	case MOVE_LEFT:
-		switch (sprite->Keyframe()) {
+		switch (sprite->getCurrentKeyframe()) {
 		case 0:
 			if (top) return glm::ivec2(18, 13);
 			else return glm::ivec2(33, 47);
@@ -192,7 +192,7 @@ glm::ivec2 Player::getHitbox(bool top)
 		}
 		break;
 	case MOVE_RIGHT:
-		switch (sprite->Keyframe()) {
+		switch (sprite->getCurrentKeyframe()) {
 		case 0:
 			if (top) return glm::ivec2(19, 13);
 			else return glm::ivec2(33, 47);
