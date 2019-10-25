@@ -39,11 +39,13 @@ void Scene::init()
 
 	switch (level) {
 	case START:
-		texture.loadFromFile("images/startscreen.png", TEXTURE_PIXEL_FORMAT_RGBA);
-		texture.setMinFilter(GL_NEAREST);
-		texture.setMagFilter(GL_NEAREST);
-		sprite = Sprite::createSprite(glm::ivec2(STARTSCREEN_WIDTH, STARTSCREEN_HEIGHT), glm::vec2(1.0f, 1.0f), &texture, &texProgram);
-		projection = glm::ortho(0.0f, float(STARTSCREEN_WIDTH), float(STARTSCREEN_HEIGHT), 0.0f);
+		loadStaticImg("images/startscreen.png");
+		break;
+	case HELP:
+		loadStaticImg("images/helpscreen.png");
+		break;
+	case CREDITS:
+		loadStaticImg("images/creditscreen.png");
 		break;
 	case LEVEL1:
 		map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
@@ -58,6 +60,14 @@ void Scene::init()
 	currentTime = 0.0f;
 }
 
+void Scene::loadStaticImg(char* path) {
+	texture.loadFromFile(path, TEXTURE_PIXEL_FORMAT_RGBA);
+	texture.setMinFilter(GL_NEAREST);
+	texture.setMagFilter(GL_NEAREST);
+	sprite = Sprite::createSprite(glm::ivec2(STARTSCREEN_WIDTH, STARTSCREEN_HEIGHT), glm::vec2(1.0f, 1.0f), &texture, &texProgram);
+	projection = glm::ortho(0.0f, float(STARTSCREEN_WIDTH), float(STARTSCREEN_HEIGHT), 0.0f);
+}
+
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
@@ -66,6 +76,20 @@ void Scene::update(int deltaTime)
 	case START:
 		if (Game::instance().getKey('\r')) {
 			level = LEVEL1;
+			init();
+		} else if (Game::instance().getKey('h')) {
+			level = HELP;
+			init();
+		} else if (Game::instance().getKey('c')) {
+			level = CREDITS;
+			init();
+		}
+		break;
+	case HELP:
+	case CREDITS:
+		if (Game::instance().getKey('\r')) {
+			Game::instance().keyReleased('\r');
+			level = START;
 			init();
 		}
 		break;
@@ -92,6 +116,8 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	switch (level) {
 	case START:
+	case HELP:
+	case CREDITS:
 		sprite->render();
 		break;
 	case LEVEL1:
