@@ -98,7 +98,7 @@ void Player::update(int deltaTime)
 		}
 		else
 		{
-			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
+			posPlayer.y = int(startY - JUMP_HEIGHT * sin(glm::radians(float(jumpAngle))));
 			if (jumpAngle > 90)
 				bJumping = !map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y);
 		}
@@ -115,6 +115,7 @@ void Player::update(int deltaTime)
 				startY = posPlayer.y;
 			} else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
 				posPlayer.y += FALL_STEP - 1;
+				Game::instance().specialKeyReleased(GLUT_KEY_DOWN);
 			}
 		}
 	}
@@ -153,37 +154,37 @@ glm::ivec2 Player::getHitbox(bool top) const
 	switch (sprite->getCurrentAnimation()) {
 	case STAND_LEFT:
 		if (top) return glm::ivec2(20, 13);
-		else return glm::ivec2(34, 47);
+		else return glm::ivec2(14, 47);
 		break;
 	case STAND_RIGHT:
 		if (top) return glm::ivec2(18, 13);
-		else return glm::ivec2(31, 47);
+		else return glm::ivec2(13, 47);
 		break;
 	case MOVE_LEFT:
 		switch (sprite->getCurrentKeyframe()) {
 		case 0:
 			if (top) return glm::ivec2(18, 13);
-			else return glm::ivec2(33, 47);
+			else return glm::ivec2(15, 47);
 			break;
 		case 1:
 			if (top) return glm::ivec2(18, 13);
-			else return glm::ivec2(35, 47);
+			else return glm::ivec2(17, 47);
 			break;
 		case 2:
 			if (top) return glm::ivec2(16, 16);
-			else return glm::ivec2(36, 47);
+			else return glm::ivec2(20, 47);
 			break;
 		case 3:
 			if (top) return glm::ivec2(16, 13);
-			else return glm::ivec2(33, 47);
+			else return glm::ivec2(17, 47);
 			break;
 		case 4:
 			if (top) return glm::ivec2(16, 13);
-			else return glm::ivec2(33, 47);
+			else return glm::ivec2(17, 47);
 			break;
 		case 5:
 			if (top) return glm::ivec2(16, 16);
-			else return glm::ivec2(36, 47);
+			else return glm::ivec2(20, 47);
 			break;
 		default:
 			if (top) return posPlayer;
@@ -195,27 +196,27 @@ glm::ivec2 Player::getHitbox(bool top) const
 		switch (sprite->getCurrentKeyframe()) {
 		case 0:
 			if (top) return glm::ivec2(19, 13);
-			else return glm::ivec2(33, 47);
+			else return glm::ivec2(14, 47);
 			break;
 		case 1:
 			if (top) return glm::ivec2(17, 13);
-			else return glm::ivec2(32, 47);
+			else return glm::ivec2(15, 47);
 			break;
 		case 2:
 			if (top) return glm::ivec2(16, 16);
-			else return glm::ivec2(36, 47);
+			else return glm::ivec2(20, 47);
 			break;
 		case 3:
 			if (top) return glm::ivec2(19, 14);
-			else return glm::ivec2(34, 47);
+			else return glm::ivec2(15, 47);
 			break;
 		case 4:
 			if (top) return glm::ivec2(17, 14);
-			else return glm::ivec2(34, 47);
+			else return glm::ivec2(17, 47);
 			break;
 		case 5:
 			if (top) return glm::ivec2(16, 16);
-			else return glm::ivec2(36, 47);
+			else return glm::ivec2(20, 47);
 			break;
 		default:
 			if (top) return posPlayer;
