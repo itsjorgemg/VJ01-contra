@@ -1,9 +1,10 @@
 #ifndef _PLAYER_INCLUDE
 #define _PLAYER_INCLUDE
 
-
+#include <memory>
 #include "Sprite.h"
 #include "TileMap.h"
+#include "Bullet.h"
 
 
 // Player is basically a Sprite that represents the player. As such it has
@@ -23,6 +24,7 @@ public:
 	glm::ivec2 getPosition() const;
 	glm::ivec2 getSize() const;
 	glm::ivec2 getHitbox(bool top) const;
+	glm::vec2 getDirection() const;
 	
 private:
 	bool bJumping;
@@ -31,6 +33,8 @@ private:
 	Texture spritesheet;
 	Sprite *sprite;
 	TileMap *map;
+	ShaderProgram* shaderProgram;
+	vector<shared_ptr<Bullet>> bullets;
 
 };
 

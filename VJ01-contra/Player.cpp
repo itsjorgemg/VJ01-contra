@@ -1,9 +1,12 @@
 #include <cmath>
 #include <iostream>
+#include <algorithm>
+#include <functional>
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Player.h"
 #include "Game.h"
+#include "Bullet.h"
 
 
 #define JUMP_ANGLE_STEP 4
@@ -17,9 +20,9 @@ enum PlayerAnims
 	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
 };
 
-
 void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 {
+	this->shaderProgram = &shaderProgram;
 	bJumping = false;
 	spritesheet.loadFromFile("images/main_character.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(getSize(), glm::vec2(1.f / 10.f, 1.f / 10.f), &spritesheet, &shaderProgram);
@@ -116,16 +119,28 @@ void Player::update(int deltaTime)
 			} else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
 				posPlayer.y += FALL_STEP - 1;
 				Game::instance().specialKeyReleased(GLUT_KEY_DOWN);
+			} else if (Game::instance().getKey('\r')) {
+				bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1), getDirection(), *shaderProgram));
+				Game::instance().keyReleased('\r');
 			}
 		}
 	}
 
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+	for (auto bullet : bullets) {
+		bullet->update(deltaTime);
+	}
+	bullets.erase(remove_if(bullets.begin(), bullets.end(), [](shared_ptr<Bullet> bullet) {
+		return !bullet->isAlive();
+	}), bullets.end());
 }
 
 void Player::render()
 {
 	sprite->render();
+	for (auto bullet : bullets) {
+		bullet->render();
+	}
 }
 
 void Player::setTileMap(TileMap* tileMap)
@@ -227,5 +242,16 @@ glm::ivec2 Player::getHitbox(bool top) const
 	default:
 		if (top) return posPlayer;
 		else return glm::ivec2(48, 48);
+	}
+}
+
+glm::vec2 Player::getDirection() const {
+	switch (sprite->getCurrentAnimation()) {
+	case STAND_LEFT:
+	case MOVE_LEFT:
+		return glm::vec2(-1.0f, 0.0f);
+	case STAND_RIGHT:
+	case MOVE_RIGHT:
+		return glm::vec2(1.0f, 0.0f);
 	}
 }
