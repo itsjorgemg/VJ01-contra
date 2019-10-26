@@ -37,9 +37,16 @@ void Scene::init()
 {
 	initShaders();
 
+	irrklang::ISoundEngine* soundEngine = Game::instance().getSoundEngine();
+
 	switch (level) {
 	case START:
 		loadStaticImg("images/startscreen.png");
+		if (backgroundMusic != nullptr) {
+			backgroundMusic->stop();
+			backgroundMusic->drop();
+		}
+		backgroundMusic = soundEngine->play2D("sounds/intro.ogg", true, false, true);
 		break;
 	case HELP:
 		loadStaticImg("images/helpscreen.png");
@@ -54,6 +61,11 @@ void Scene::init()
 		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 		player->setTileMap(map);
 		projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
+		if (backgroundMusic != nullptr) {
+			backgroundMusic->stop();
+			backgroundMusic->drop();
+		}
+		backgroundMusic = soundEngine->play2D("sounds/jungle-hangar.ogg", true, false, true);
 		break;
 	}
 	

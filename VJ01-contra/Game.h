@@ -2,6 +2,7 @@
 #define _GAME_INCLUDE
 
 
+#include <irrKlang.h>
 #include "Scene.h"
 
 
@@ -41,12 +42,14 @@ public:
 	
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
+	irrklang::ISoundEngine* getSoundEngine();
 
 private:
 	bool bPlay;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
+	irrklang::ISoundEngine* soundEngine;
 
 };
 

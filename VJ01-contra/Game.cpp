@@ -67,6 +67,12 @@ bool Game::getSpecialKey(int key) const
 	return specialKeys[key];
 }
 
+irrklang::ISoundEngine* Game::getSoundEngine() {
+	if (soundEngine == nullptr)
+		soundEngine = irrklang::createIrrKlangDevice();
+	return soundEngine;
+}
+
 
 
 

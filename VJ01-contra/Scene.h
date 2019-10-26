@@ -3,6 +3,7 @@
 
 
 #include <glm/glm.hpp>
+#include <irrKlang.h>
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include "Player.h"
@@ -37,6 +38,7 @@ private:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+	irrklang::ISound* backgroundMusic;
 
 };
 
