@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
@@ -61,7 +62,7 @@ void Scene::init()
 		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 		player->setTileMap(map);
 
-		vector<glm::vec2> enemiesPos = {glm::vec2(5, 1)};
+		vector<glm::vec2> enemiesPos = {glm::vec2(5, 1), glm::vec2(8, 3), glm::vec2(15, 1)};
 		for (auto pos : enemiesPos) {
 			enemies.emplace_back(make_shared<Enemy>());
 			enemies[enemies.size() - 1]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
@@ -116,8 +117,26 @@ void Scene::update(int deltaTime)
 		break;
 	case LEVEL1:
 		player->update(deltaTime);
+		int playerX = player->getPosition().x;
 		for (auto enemy : enemies) {
+			enemy->setLookingDirection(enemy->getPosition().x < playerX);
 			enemy->update(deltaTime);
+		}
+		vector<shared_ptr<Enemy>> enemiesToRemove = vector<shared_ptr<Enemy>>();
+		for (auto bullet : player->getBullets()) {
+			glm::vec2 pos = bullet->getPosition();
+			for (auto enemy : enemies) {
+				glm::vec2 posE = enemy->getPosition() + enemy->getHitbox(1);
+				glm::vec2 sizeE = enemy->getHitbox(0);
+				if (pos.x > posE.x && pos.x < posE.x + sizeE.x &&
+					pos.y > posE.y && pos.y < enemy->getPosition().y + sizeE.y) {
+					enemiesToRemove.emplace_back(enemy);
+					Game::instance().getSoundEngine()->play2D("sounds/enemyhit.wav");
+				}
+			}
+		}
+		for (auto enemyRemove : enemiesToRemove) {
+			enemies.erase(remove(enemies.begin(), enemies.end(), enemyRemove), enemies.end());
 		}
 
 		float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;

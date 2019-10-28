@@ -25,6 +25,7 @@ public:
 	glm::ivec2 getSize() const;
 	glm::ivec2 getHitbox(bool top) const;
 	glm::vec2 getDirection() const;
+	vector<shared_ptr<Bullet>> getBullets() const;
 	
 private:
 	bool bJumping;

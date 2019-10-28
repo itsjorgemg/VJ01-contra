@@ -235,3 +235,7 @@ glm::vec2 Player::getDirection() const {
 		return glm::vec2(1.0f, 0.0f);
 	}
 }
+
+vector<shared_ptr<Bullet>> Player::getBullets() const {
+	return bullets;
+}

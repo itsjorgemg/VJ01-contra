@@ -88,6 +88,10 @@ void Enemy::setPosition(const glm::vec2& pos) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)));
 }
 
+void Enemy::setLookingDirection(bool right) {
+	sprite->changeAnimation(right ? STAND_RIGHT : STAND_LEFT);
+}
+
 glm::ivec2 Enemy::getPosition() const {
 	return position;
 }
