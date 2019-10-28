@@ -60,6 +60,15 @@ void Scene::init()
 		player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 		player->setTileMap(map);
+
+		vector<glm::vec2> enemiesPos = {glm::vec2(5, 1)};
+		for (auto pos : enemiesPos) {
+			enemies.emplace_back(make_shared<Enemy>());
+			enemies[enemies.size() - 1]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+			enemies[enemies.size() - 1]->setPosition(glm::vec2(pos.x * map->getTileSize(), pos.y * map->getTileSize() + enemies[enemies.size() - 1]->getSize().y / 2));
+			enemies[enemies.size() - 1]->setTileMap(map);
+		}
+
 		projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
 		if (backgroundMusic != nullptr) {
 			backgroundMusic->stop();
@@ -107,6 +116,9 @@ void Scene::update(int deltaTime)
 		break;
 	case LEVEL1:
 		player->update(deltaTime);
+		for (auto enemy : enemies) {
+			enemy->update(deltaTime);
+		}
 
 		float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
 		float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
@@ -135,6 +147,9 @@ void Scene::render()
 	case LEVEL1:
 		map->render();
 		player->render();
+		for (auto enemy : enemies) {
+			enemy->render();
+		}
 	break;
 	}
 }
