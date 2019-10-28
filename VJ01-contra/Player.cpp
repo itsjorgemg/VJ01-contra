@@ -106,6 +106,7 @@ void Player::update(int deltaTime) {
 				Game::instance().specialKeyReleased(GLUT_KEY_DOWN);
 			} else if (Game::instance().getKey('\r')) {
 				bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
+				Game::instance().getSoundEngine()->play2D("sounds/shoot.wav");
 				Game::instance().keyReleased('\r');
 			}
 		}
