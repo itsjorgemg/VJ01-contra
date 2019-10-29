@@ -161,12 +161,12 @@ void Scene::update(int deltaTime)
 					player->decreaseLife();
 					bullet->setAlive(false);
 					Game::instance().getSoundEngine()->play2D("sounds/enemyhit.wav");
-					if (player->getLife() < 0) {
-						level = GAMEOVER;
-						init();
-					}
 				}
 			}
+		}
+		if (player->getLife() < 0) {
+			level = GAMEOVER;
+			init();
 		}
 
 		vector<shared_ptr<Enemy>> enemiesToRemove = vector<shared_ptr<Enemy>>();

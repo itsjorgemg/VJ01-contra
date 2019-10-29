@@ -93,11 +93,11 @@ void Player::update(int deltaTime) {
 		} else {
 			posPlayer.y = int(startY - JUMP_HEIGHT * sin(glm::radians(float(jumpAngle))));
 			if (jumpAngle > 90)
-				bJumping = !map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y);
+				bJumping = !map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y, &life);
 		}
 	} else {
 		posPlayer.y += FALL_STEP;
-		if (map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y)) {
+		if (map->collisionMoveDown(posPlayer + getHitbox(1), getHitbox(0), &posPlayer.y, &life)) {
 			if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
 				bJumping = true;
 				jumpAngle = 0;
