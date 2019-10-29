@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
+#include "Player.h"
 
 
 #define SCREEN_X 0
@@ -182,6 +183,7 @@ void Scene::update(int deltaTime)
 					pos.y > posE.y && pos.y < enemy->getPosition().y + sizeE.y) {
 					enemiesToRemove.emplace_back(enemy);
 					Game::instance().getSoundEngine()->play2D("sounds/enemyhit.wav");
+					player->incSpreadgun();
 				}
 			}
 		}

@@ -28,6 +28,8 @@ public:
 	int getLife() const;
 	void decreaseLife();
 	vector<shared_ptr<Bullet>> getBullets() const;
+	void resetSpreadgun();
+	void incSpreadgun();
 	
 private:
 	bool bJumping;
@@ -39,6 +41,7 @@ private:
 	TileMap *map;
 	ShaderProgram* shaderProgram;
 	vector<shared_ptr<Bullet>> bullets;
+	int spreadgun;
 
 };
 

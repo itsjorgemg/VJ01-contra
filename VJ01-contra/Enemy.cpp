@@ -137,7 +137,7 @@ glm::ivec2 Enemy::getHitbox(bool top) const {
 			else return glm::ivec2(20, 47);
 			break;
 		default:
-			if (top) return position;
+			if (top) return glm::ivec2(0, 0);
 			else return glm::ivec2(48, 48);
 			break;
 		}
@@ -169,13 +169,13 @@ glm::ivec2 Enemy::getHitbox(bool top) const {
 			else return glm::ivec2(20, 47);
 			break;
 		default:
-			if (top) return position;
+			if (top) return glm::ivec2(0, 0);
 			else return glm::ivec2(48, 48);
 			break;
 		}
 		break;
 	default:
-		if (top) return position;
+		if (top) return glm::ivec2(0, 0);
 		else return glm::ivec2(48, 48);
 	}
 }

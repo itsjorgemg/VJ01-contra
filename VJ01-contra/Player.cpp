@@ -57,6 +57,7 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 	sprite->changeAnimation(STAND_RIGHT);
 	tileMapDispl = tileMapPos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+	spreadgun = false;
 
 }
 
@@ -106,7 +107,14 @@ void Player::update(int deltaTime) {
 				posPlayer.y += FALL_STEP - 1;
 				Game::instance().specialKeyReleased(GLUT_KEY_DOWN);
 			} else if (Game::instance().getKey('\r')) {
-				bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
+				if (spreadgun > 1) {
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() + glm::vec2(0, 0.03), *shaderProgram));
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() + glm::vec2(0, 0.06), *shaderProgram));
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() - glm::vec2(0, 0.03), *shaderProgram));
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() - glm::vec2(0, 0.06), *shaderProgram));
+				}
+				else bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
 				Game::instance().getSoundEngine()->play2D("sounds/shoot.wav");
 				Game::instance().keyReleased('\r');
 			}
@@ -183,7 +191,7 @@ glm::ivec2 Player::getHitbox(bool top) const {
 			else return glm::ivec2(20, 47);
 			break;
 		default:
-			if (top) return posPlayer;
+			if (top) return glm::ivec2(0, 0);
 			else return glm::ivec2(48, 48);
 			break;
 		}
@@ -215,13 +223,13 @@ glm::ivec2 Player::getHitbox(bool top) const {
 			else return glm::ivec2(20, 47);
 			break;
 		default:
-			if (top) return posPlayer;
+			if (top) return glm::ivec2(0, 0);
 			else return glm::ivec2(48, 48);
 			break;
 		}
 		break;
 	default:
-		if (top) return posPlayer;
+		if (top) return glm::ivec2(0, 0);
 		else return glm::ivec2(48, 48);
 	}
 }
@@ -243,8 +251,17 @@ int Player::getLife() const {
 
 void Player::decreaseLife() {
 	life--;
+	resetSpreadgun();
 }
 
 vector<shared_ptr<Bullet>> Player::getBullets() const {
 	return bullets;
+}
+
+void Player::resetSpreadgun() {
+	spreadgun = 0;
+}
+
+void Player::incSpreadgun() {
+	spreadgun++;
 }
