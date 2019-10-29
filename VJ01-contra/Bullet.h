@@ -16,6 +16,7 @@ public:
 	void setPosition(const glm::vec2& pos);
 	glm::vec2 getPosition() const;
 	bool isAlive() const;
+	void setAlive(bool a);
 
 private:
 	glm::vec2 position;

@@ -25,6 +25,7 @@ enum PlayerAnims
 void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 	this->shaderProgram = &shaderProgram;
 	bJumping = false;
+	life = 3;
 	spritesheet.loadFromFile("images/main_character.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(getSize(), glm::vec2(1.f / 10.f, 1.f / 10.f), &spritesheet, &shaderProgram);
 	spritesheet.setMinFilter(GL_NEAREST);
@@ -234,6 +235,14 @@ glm::vec2 Player::getDirection() const {
 	case MOVE_RIGHT:
 		return glm::vec2(1.0f, 0.0f);
 	}
+}
+
+int Player::getLife() const {
+	return life;
+}
+
+void Player::decreaseLife() {
+	life--;
 }
 
 vector<shared_ptr<Bullet>> Player::getBullets() const {

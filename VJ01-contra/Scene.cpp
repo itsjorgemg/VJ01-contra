@@ -18,6 +18,8 @@
 #define STARTSCREEN_WIDTH 240
 #define STARTSCREEN_HEIGHT 240
 
+#define SPRITELIFE_OFFSET 5
+
 Scene::Scene()
 {
 	level = START;
@@ -55,6 +57,14 @@ void Scene::init()
 	case CREDITS:
 		loadStaticImg("images/creditscreen.png");
 		break;
+	case GAMEOVER:
+		loadStaticImg("images/gameoverscreen.png");
+		if (backgroundMusic != nullptr) {
+			backgroundMusic->stop();
+			backgroundMusic->drop();
+		}
+		backgroundMusic = soundEngine->play2D("sounds/gameover.ogg", false, false, true);
+		break;
 	case LEVEL1:
 		map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 		player = new Player();
@@ -69,6 +79,12 @@ void Scene::init()
 			enemies[enemies.size() - 1]->setPosition(glm::vec2(pos.x * map->getTileSize(), pos.y * map->getTileSize() + enemies[enemies.size() - 1]->getSize().y / 2));
 			enemies[enemies.size() - 1]->setTileMap(map);
 		}
+
+		textureLife.loadFromFile("images/life.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		textureLife.setMinFilter(GL_NEAREST);
+		textureLife.setMagFilter(GL_NEAREST);
+		spriteLife = Sprite::createSprite(glm::ivec2(8, 16), glm::vec2(1.0f, 1.0f), &textureLife, &texProgram);
+		spriteLife->setPosition(glm::vec2(SPRITELIFE_OFFSET));
 
 		projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
 		if (backgroundMusic != nullptr) {
@@ -115,13 +131,44 @@ void Scene::update(int deltaTime)
 			init();
 		}
 		break;
+	case GAMEOVER:
+		if (Game::instance().getKey('\r')) {
+			Game::instance().keyReleased('\r');
+			level = LEVEL1;
+			init();
+		}
+		break;
 	case LEVEL1:
 		player->update(deltaTime);
-		int playerX = player->getPosition().x;
+
+		float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
+		float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
+		posPlayer = glm::clamp(posPlayer, 0.0f, rightLimit);
+		projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
+
+		spriteLife->setPosition(glm::vec2(posPlayer + SPRITELIFE_OFFSET, SPRITELIFE_OFFSET));
+
+		glm::vec2 posP = player->getPosition() + player->getHitbox(1);
+		glm::vec2 sizeP = player->getHitbox(0);
 		for (auto enemy : enemies) {
-			enemy->setLookingDirection(enemy->getPosition().x < playerX);
+			enemy->setLookingDirection(enemy->getPosition().x < player->getPosition().x);
 			enemy->update(deltaTime);
+
+			for (auto bullet : enemy->getBullets()) {
+				glm::vec2 pos = bullet->getPosition();
+				if (pos.x > posP.x && pos.x < posP.x + sizeP.x &&
+					pos.y > posP.y && pos.y < player->getPosition().y + sizeP.y) {
+					player->decreaseLife();
+					bullet->setAlive(false);
+					Game::instance().getSoundEngine()->play2D("sounds/enemyhit.wav");
+					if (player->getLife() < 0) {
+						level = GAMEOVER;
+						init();
+					}
+				}
+			}
 		}
+
 		vector<shared_ptr<Enemy>> enemiesToRemove = vector<shared_ptr<Enemy>>();
 		for (auto bullet : player->getBullets()) {
 			glm::vec2 pos = bullet->getPosition();
@@ -138,11 +185,6 @@ void Scene::update(int deltaTime)
 		for (auto enemyRemove : enemiesToRemove) {
 			enemies.erase(remove(enemies.begin(), enemies.end(), enemyRemove), enemies.end());
 		}
-
-		float posPlayer = player->getPosition().x + player->getSize().x / 2 - CAMERA_WIDTH / 2;
-		float rightLimit = (map->getSize().x * map->getTileSize()) - CAMERA_WIDTH;
-		posPlayer = glm::clamp(posPlayer, 0.0f, rightLimit);
-		projection = glm::ortho(posPlayer, float(CAMERA_WIDTH) + posPlayer, float(CAMERA_HEIGHT), 0.0f);
 	break;
 	}
 }
@@ -161,6 +203,7 @@ void Scene::render()
 	case START:
 	case HELP:
 	case CREDITS:
+	case GAMEOVER:
 		sprite->render();
 		break;
 	case LEVEL1:
@@ -168,6 +211,12 @@ void Scene::render()
 		player->render();
 		for (auto enemy : enemies) {
 			enemy->render();
+		}
+		for (int i = 0; i < player->getLife(); i++) {
+			if (i > 0) {
+				spriteLife->setPosition(spriteLife->getPosition() + glm::vec2(16.0f, 0.0f));
+			}
+			spriteLife->render();
 		}
 	break;
 	}

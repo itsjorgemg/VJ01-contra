@@ -25,10 +25,13 @@ public:
 	glm::ivec2 getSize() const;
 	glm::ivec2 getHitbox(bool top) const;
 	glm::vec2 getDirection() const;
+	int getLife() const;
+	void decreaseLife();
 	vector<shared_ptr<Bullet>> getBullets() const;
 	
 private:
 	bool bJumping;
+	int life;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY;
 	Texture spritesheet;

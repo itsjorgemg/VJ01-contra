@@ -13,7 +13,7 @@
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
-enum Level { START, HELP, CREDITS, LEVEL1 };
+enum Level { START, HELP, CREDITS, LEVEL1, GAMEOVER };
 
 class Scene
 {
@@ -33,7 +33,9 @@ private:
 private:
 	Level level;
 	Texture texture;
+	Texture textureLife;
 	Sprite *sprite;
+	Sprite *spriteLife;
 	TileMap *map;
 	Player *player;
 	vector<shared_ptr<Enemy>> enemies;

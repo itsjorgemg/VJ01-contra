@@ -39,3 +39,7 @@ glm::vec2 Bullet::getPosition() const {
 bool Bullet::isAlive() const {
 	return alive;
 }
+
+void Bullet::setAlive(bool a) {
+	alive = a;
+}

@@ -8,8 +8,8 @@
 #include "Game.h"
 #include "Bullet.h"
 
-#define MIN_SHOOT_INTERVAL 10
-#define MAX_SHOOT_INTERVAL 80
+#define MIN_SHOOT_INTERVAL 40
+#define MAX_SHOOT_INTERVAL 100
 #define GUN_POSITION_X 5
 #define GUN_POSITION_Y 10
 
@@ -189,4 +189,8 @@ glm::vec2 Enemy::getDirection() const {
 	case MOVE_RIGHT:
 		return glm::vec2(1.0f, 0.0f);
 	}
+}
+
+vector<shared_ptr<Bullet>> Enemy::getBullets() const {
+	return bullets;
 }

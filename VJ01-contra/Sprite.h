@@ -32,6 +32,7 @@ public:
 	void changeAnimation(int animId);
 	int getCurrentAnimation() const;
 	int getCurrentKeyframe() const;
+	glm::vec2 getPosition() const;
 	
 	void setPosition(const glm::vec2 &pos);
 
