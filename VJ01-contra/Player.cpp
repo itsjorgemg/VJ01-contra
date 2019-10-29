@@ -107,14 +107,15 @@ void Player::update(int deltaTime) {
 				posPlayer.y += FALL_STEP - 1;
 				Game::instance().specialKeyReleased(GLUT_KEY_DOWN);
 			} else if (Game::instance().getKey('\r')) {
-				if (spreadgun > 1) {
+				if (spreadgun) {
 					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
 					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() + glm::vec2(0, 0.03), *shaderProgram));
 					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() + glm::vec2(0, 0.06), *shaderProgram));
 					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() - glm::vec2(0, 0.03), *shaderProgram));
 					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection() - glm::vec2(0, 0.06), *shaderProgram));
+				} else {
+					bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
 				}
-				else bullets.emplace_back(make_shared<Bullet>(posPlayer + getHitbox(1) + glm::ivec2(GUN_POSITION_X, GUN_POSITION_Y), getDirection(), *shaderProgram));
 				Game::instance().getSoundEngine()->play2D("sounds/shoot.wav");
 				Game::instance().keyReleased('\r');
 			}
@@ -249,19 +250,19 @@ int Player::getLife() const {
 	return life;
 }
 
+bool Player::getSpreadgun() const {
+	return spreadgun;
+}
+
 void Player::decreaseLife() {
-	life--;
-	resetSpreadgun();
+	if (!spreadgun) life--;
+	spreadgun = false;
 }
 
 vector<shared_ptr<Bullet>> Player::getBullets() const {
 	return bullets;
 }
 
-void Player::resetSpreadgun() {
-	spreadgun = 0;
-}
-
-void Player::incSpreadgun() {
-	spreadgun++;
+void Player::setSpreadgun(bool b) {
+	spreadgun = b;
 }

@@ -34,8 +34,10 @@ private:
 	Level level;
 	Texture texture;
 	Texture textureLife;
+	Texture textureSpreadgun;
 	Sprite *sprite;
 	Sprite *spriteLife;
+	Sprite *spriteSpreadgun;
 	TileMap *map;
 	Player *player;
 	vector<shared_ptr<Enemy>> enemies;

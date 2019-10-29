@@ -21,6 +21,9 @@
 
 #define SPRITELIFE_OFFSET 5
 
+#define SPREADGUN_POS_X 200
+#define SPREADGUN_POS_Y 50
+
 Scene::Scene()
 {
 	level = START;
@@ -89,6 +92,12 @@ void Scene::init()
 		textureLife.setMagFilter(GL_NEAREST);
 		spriteLife = Sprite::createSprite(glm::ivec2(8, 16), glm::vec2(1.0f, 1.0f), &textureLife, &texProgram);
 		spriteLife->setPosition(glm::vec2(SPRITELIFE_OFFSET));
+
+		textureSpreadgun.loadFromFile("images/spreadgun.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		textureSpreadgun.setMinFilter(GL_NEAREST);
+		textureSpreadgun.setMagFilter(GL_NEAREST);
+		spriteSpreadgun = Sprite::createSprite(glm::ivec2(24, 15), glm::vec2(1.0f, 1.0f), &textureSpreadgun, &texProgram);
+		spriteSpreadgun->setPosition(glm::vec2(SPREADGUN_POS_X, SPREADGUN_POS_Y));
 
 		projection = glm::ortho(0.0f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.0f);
 		if (backgroundMusic != nullptr) {
@@ -183,12 +192,17 @@ void Scene::update(int deltaTime)
 					pos.y > posE.y && pos.y < enemy->getPosition().y + sizeE.y) {
 					enemiesToRemove.emplace_back(enemy);
 					Game::instance().getSoundEngine()->play2D("sounds/enemyhit.wav");
-					player->incSpreadgun();
 				}
 			}
 		}
 		for (auto enemyRemove : enemiesToRemove) {
 			enemies.erase(remove(enemies.begin(), enemies.end(), enemyRemove), enemies.end());
+		}
+
+		if (!player->getSpreadgun() && SPREADGUN_POS_X > posP.x && SPREADGUN_POS_X < posP.x + sizeP.x &&
+			SPREADGUN_POS_Y > posP.y && SPREADGUN_POS_Y < player->getPosition().y + sizeP.y) {
+			player->setSpreadgun(true);
+			spriteSpreadgun->setPosition(glm::vec2(-1.0f, -1.0f));
 		}
 	break;
 	}
@@ -217,6 +231,7 @@ void Scene::render()
 		for (auto enemy : enemies) {
 			enemy->render();
 		}
+		spriteSpreadgun->render();
 		for (int i = 0; i < player->getLife(); i++) {
 			if (i > 0) {
 				spriteLife->setPosition(spriteLife->getPosition() + glm::vec2(16.0f, 0.0f));

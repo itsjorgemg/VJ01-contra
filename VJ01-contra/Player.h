@@ -26,10 +26,10 @@ public:
 	glm::ivec2 getHitbox(bool top) const;
 	glm::vec2 getDirection() const;
 	int getLife() const;
+	bool getSpreadgun() const;
 	void decreaseLife();
 	vector<shared_ptr<Bullet>> getBullets() const;
-	void resetSpreadgun();
-	void incSpreadgun();
+	void setSpreadgun(bool b);
 	
 private:
 	bool bJumping;
@@ -41,7 +41,7 @@ private:
 	TileMap *map;
 	ShaderProgram* shaderProgram;
 	vector<shared_ptr<Bullet>> bullets;
-	int spreadgun;
+	bool spreadgun;
 
 };
 
