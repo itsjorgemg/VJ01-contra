@@ -8,7 +8,7 @@
 #include "Game.h"
 #include "Bullet.h"
 
-#define MIN_SHOOT_INTERVAL 40
+#define MIN_SHOOT_INTERVAL 80
 #define MAX_SHOOT_INTERVAL 100
 #define GUN_POSITION_X 5
 #define GUN_POSITION_Y 10

@@ -72,7 +72,10 @@ void Scene::init()
 		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 		player->setTileMap(map);
 
-		vector<glm::vec2> enemiesPos = {glm::vec2(5, 1), glm::vec2(8, 3), glm::vec2(15, 1)};
+		vector<glm::vec2> enemiesPos = {glm::vec2(5, 1), glm::vec2(8, 3), glm::vec2(15, 1), glm::vec2(20, 4),
+			glm::vec2(27, 1), glm::vec2(39, 1), glm::vec2(45, 4), glm::vec2(52, 0),
+			glm::vec2(54, 2), glm::vec2(60, 3), glm::vec2(64, 1), glm::vec2(76, 3),
+			glm::vec2(84, 2), glm::vec2(94, 1), glm::vec2(96, 1), glm::vec2(99, 3)};
 		for (auto pos : enemiesPos) {
 			enemies.emplace_back(make_shared<Enemy>());
 			enemies[enemies.size() - 1]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
